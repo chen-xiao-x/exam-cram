@@ -32,13 +32,18 @@ const course = {
   allAnswers: {},
 };
 
-// 章节
+// 章节（清理标题编号）
 data.sections.forEach((sec, i) => {
   const sectionId = 's' + (i + 1);
+  const cleanTitle = (sec.title || '')
+    .replace(/^(第[一二三四五六七八九十百千\d]+章\s*)/i, '')
+    .replace(/^(Chapter\s*\d+[\.\s:：-]*)\s*/i, '')
+    .replace(/^(第\d+章\s*)/i, '')
+    .trim();
   course.sections.push({
     id: sectionId,
     no: String(i + 1),
-    title: sec.title,
+    title: cleanTitle,
     summary: sec.summary || '',
     cards: (sec.cards || []).map((c, j) => ({
       id: sectionId + '_c' + (j + 1),

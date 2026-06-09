@@ -168,6 +168,15 @@ function mergeResults(results) {
     sectionOffset += r.sections.length;
   }
 
+  // 清理章节标题：去掉编号前缀
+  for (const sec of allSections) {
+    sec.title = sec.title
+      .replace(/^(第[一二三四五六七八九十百千\d]+章\s*)/i, '')
+      .replace(/^(Chapter\s*\d+[\.\s:：-]*)\s*/i, '')
+      .replace(/^(第\d+章\s*)/i, '')
+      .trim();
+  }
+
   return { sections: allSections, questions: allQuestions };
 }
 
