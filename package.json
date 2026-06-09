@@ -1,0 +1,20 @@
+{
+  "name": "final-cram-v0",
+  "version": "1.0.0",
+  "private": true,
+  "description": "期末速通 - 跨格式课件 AI 制卡复习",
+  "main": "ai_server.js",
+  "scripts": {
+    "start": "node ai_server.js",
+    "dev:ai": "node ai_server.js",
+    "dev:web": "node serve.js",
+    "dev": "start-all.bat",
+    "cleanup": "node server/cleanup-脏数据.js"
+  },
+  "dependencies": {
+    "pdf-parse": "^1.1.1",
+    "mammoth": "^1.8.0",
+    "jszip": "^3.10.1",
+    "xml2js": "^0.6.2"
+  }
+}

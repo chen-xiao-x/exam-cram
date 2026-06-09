@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>期末速通 · 数据治理</title>
+  <meta name="description" content="为大学生专业课程打造的极简复习工具 · 知识卡片 + 题库 + 错题" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // 兜底错误上报：方便后续排查（不会影响功能）
+    window.addEventListener('error', (e) => { try { console.error('[window.onerror]', e.message, e.filename + ':' + e.lineno); } catch {} });
+    window.addEventListener('unhandledrejection', (e) => { try { console.error('[unhandledrejection]', e.reason); } catch {} });
+  </script>
+  <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone@7.23.6/babel.min.js"></script>
+  <script src="./data.js"></script>
+  <!-- 前端组件（按依赖顺序加载） -->
+  <script type="text/babel" data-presets="env,react" src="./src/storage.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/ui.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/upload.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/cards.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/quiz.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/review.jsx"></script>
+  <script type="text/babel" data-presets="env,react" src="./src/app.jsx"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>导入课程数据</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; max-width: 600px; margin: 60px auto; padding: 20px; background: #fafafa; color: #18181b; }
+    h1 { font-size: 24px; }
+    .box { background: #fff; border: 1px solid #e4e4e7; border-radius: 12px; padding: 24px; margin: 20px 0; }
+    .btn { display: inline-block; padding: 10px 20px; background: #3b82f6; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin: 4px; }
+    .btn:hover { background: #2563eb; }
+    .btn-danger { background: #ef4444; }
+    .btn-danger:hover { background: #dc2626; }
+    .status { margin: 16px 0; padding: 12px; border-radius: 8px; font-size: 13px; }
+    .ok { background: #ecfdf5; color: #065f46; }
+    .err { background: #fef2f2; color: #991b1b; }
+    pre { background: #f4f4f5; padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto; }
+    input[type=file] { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>📥 导入课程数据</h1>
+  <p>将 <code>batch-process.js</code> 生成的 JSON 导入到网站。</p>
+
+  <div class="box">
+    <h3>方法一：上传 JSON 文件</h3>
+    <input type="file" id="fileInput" accept=".json">
+    <br>
+    <button class="btn" onclick="importFromFile()">导入</button>
+  </div>
+
+  <div class="box">
+    <h3>方法二：粘贴 JSON</h3>
+    <textarea id="jsonInput" rows="8" style="width:100%;padding:8px;border:1px solid #e4e4e7;border-radius:6px;font-size:12px;font-family:monospace;" placeholder='粘贴 JSON 内容...'></textarea>
+    <br>
+    <button class="btn" onclick="importFromText()">导入</button>
+  </div>
+
+  <div class="box">
+    <h3>当前数据</h3>
+    <div id="currentInfo">加载中...</div>
+    <button class="btn btn-danger" onclick="clearData()" style="margin-top:10px">🗑 清除所有数据</button>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const STORAGE_KEY = 'exam-cram-v1';
+    const VERSION = 2;
+
+    function showStatus(msg, ok) {
+      document.getElementById('result').innerHTML = '<div class="status ' + (ok ? 'ok' : 'err') + '">' + msg + '</div>';
+    }
+
+    function loadCurrent() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) { document.getElementById('currentInfo').innerHTML = '无数据'; return; }
+        const d = JSON.parse(raw);
+        const cards = (d.sections || []).reduce((a, s) => a + (s.cards || []).length, 0);
+        document.getElementById('currentInfo').innerHTML =
+          '<b>' + (d.name || '未命名') + '</b><br>' +
+          (d.sections || []).length + ' 章节 · ' + cards + ' 卡片 · ' + (d.questions || []).length + ' 题目';
+      } catch { document.getElementById('currentInfo').innerHTML = '数据解析错误'; }
+    }
+
+    function doImport(data) {
+      // 验证
+      if (!data.sections || !Array.isArray(data.sections)) {
+        showStatus('❌ JSON 格式错误：缺少 sections 数组', false);
+        return;
+      }
+
+      // 构造课程对象
+      const course = {
+        _v: VERSION,
+        name: data.name || data.meta?.courseName || '导入课程',
+        teacher: data.teacher || '',
+        school: data.school || '',
+        examDate: data.examDate || '',
+        sections: [],
+        questions: data.questions || [],
+        srs: data.srs || {},
+        mastered: data.mastered || [],
+        wrongIds: data.wrongIds || [],
+        allAnswers: data.allAnswers || {},
+      };
+
+      // 章节（如果没有 id 则生成）
+      data.sections.forEach((sec, i) => {
+        const sectionId = sec.id || ('s' + (i + 1));
+        course.sections.push({
+          id: sectionId,
+          no: sec.no || String(i + 1),
+          title: sec.title,
+          summary: sec.summary || '',
+          cards: (sec.cards || []).map((c, j) => ({
+            id: c.id || (sectionId + '_c' + (j + 1)),
+            title: c.title,
+            subtitle: c.subtitle || '',
+            tag: c.tag || '知识点',
+            bullets: c.bullets || [],
+            detail: c.detail || '',
+          })),
+        });
+      });
+
+      // 确保题目有 sectionId
+      course.questions = course.questions.map((q, i) => ({
+        ...q,
+        id: q.id || ('q' + (i + 1)),
+        sectionId: q.sectionId || ('s' + ((q.sectionIndex || 0) + 1)),
+      }));
+
+      // 保存
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(course));
+
+      const cards = course.sections.reduce((a, s) => a + s.cards.length, 0);
+      showStatus('✅ 导入成功！' + course.sections.length + ' 章节 · ' + cards + ' 卡片 · ' + course.questions.length + ' 题目', true);
+      loadCurrent();
+
+      // 2秒后跳转
+      setTimeout(() => { window.location.href = '/'; }, 1500);
+    }
+
+    function importFromFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) { showStatus('请选择文件', false); return; }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          doImport(data);
+        } catch (err) {
+          showStatus('❌ JSON 解析失败：' + err.message, false);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function importFromText() {
+      const text = document.getElementById('jsonInput').value.trim();
+      if (!text) { showStatus('请粘贴 JSON 内容', false); return; }
+      try {
+        const data = JSON.parse(text);
+        doImport(data);
+      } catch (err) {
+        showStatus('❌ JSON 解析失败：' + err.message, false);
+      }
+    }
+
+    function clearData() {
+      if (!confirm('确定清除所有学习数据？')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem('final-cram-v0');
+      localStorage.removeItem('final-cram-v0-courses');
+      loadCurrent();
+      showStatus('已清除', true);
+    }
+
+    loadCurrent();
+  </script>
+</body>
+</html>
