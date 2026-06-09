@@ -47,6 +47,7 @@ data.sections.forEach((sec, i) => {
       tag: c.tag || '知识点',
       bullets: c.bullets || [],
       detail: c.detail || '',
+      cloze: c.cloze || '',
     })),
   });
 });

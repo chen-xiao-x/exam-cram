@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>测试挖空导入</title>
+  <style>body{font-family:sans-serif;padding:40px;} .ok{color:green;} .err{color:red;}</style>
+</head>
+<body>
+  <h1>挖空数据导入测试</h1>
+  <p id="status">加载中...</p>
+  <script>
+    fetch('/tools/管理信息系统-v2-ready.json')
+      .then(r => r.json())
+      .then(data => {
+        data._v = 2;
+        localStorage.setItem('exam-cram-v1', JSON.stringify(data));
+
+        // 验证
+        const saved = JSON.parse(localStorage.getItem('exam-cram-v1'));
+        const card0 = saved.sections[0].cards[0];
+        const card1 = saved.sections[1].cards[0];
+        const hasCloze = saved.sections.some(s => s.cards.some(c => c.cloze && c.cloze.includes('[?|')));
+
+        document.getElementById('status').innerHTML =
+          '<h2 class="ok">✅ 导入完成</h2>' +
+          '<p>章节：' + saved.sections.length + '</p>' +
+          '<p>卡片：' + saved.sections.reduce((a,s) => a + s.cards.length, 0) + '</p>' +
+          '<p>有挖空的卡片：' + saved.sections.reduce((a,s) => a + s.cards.filter(c => c.cloze && c.cloze.includes('[?|')).length, 0) + '</p>' +
+          '<p>第1张卡片 cloze：<code>' + (card0.cloze || '无') + '</code></p>' +
+          '<p>第7张卡片 cloze：<code>' + (card1.cloze || '无') + '</code></p>' +
+          '<br><a href="/" style="font-size:18px">→ 打开期末速通</a>';
+      })
+      .catch(e => {
+        document.getElementById('status').innerHTML = '<h2 class="err">❌ 失败：' + e.message + '</h2>';
+      });
+  </script>
+</body>
+</html>

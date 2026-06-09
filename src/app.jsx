@@ -35,7 +35,7 @@ const JsonImportButton = ({ saveData }) => {
           const sid = sec.id || ('s' + (i + 1));
           imported.sections.push({
             id: sid, no: sec.no || String(i + 1), title: sec.title, summary: sec.summary || '',
-            cards: (sec.cards || []).map((c, j) => ({ id: c.id || (sid + '_c' + (j + 1)), title: c.title, subtitle: c.subtitle || '', tag: c.tag || '知识点', bullets: c.bullets || [], detail: c.detail || '' })),
+            cards: (sec.cards || []).map((c, j) => ({ id: c.id || (sid + '_c' + (j + 1)), title: c.title, subtitle: c.subtitle || '', tag: c.tag || '知识点', bullets: c.bullets || [], detail: c.detail || '', cloze: c.cloze || '' })),
           });
         });
         imported.questions = imported.questions.map((q, i) => ({ ...q, id: q.id || ('q' + (i + 1)), sectionId: q.sectionId || ('s' + ((q.sectionIndex || 0) + 1)) }));
@@ -165,6 +165,7 @@ const App = () => {
         tag: c.tag || '知识点',
         bullets: c.bullets || [],
         detail: c.detail || '',
+        cloze: c.cloze || '',
       })),
     }));
 

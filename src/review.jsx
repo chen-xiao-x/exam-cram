@@ -121,11 +121,23 @@ const ReviewView = ({ course, setCourse, go, setOpenedCard }) => {
 
         {revealed ? (
           <div style={{ flex: 1, animation: 'fadeIn 0.25s' }}>
+            {card.cloze && (card.cloze.includes('[?|') || card.cloze.includes('[?]')) && (
+              <div style={{ padding: '12px 14px', background: 'var(--accent-soft)', border: '1px solid var(--accent)', borderRadius: 8, fontSize: 14, lineHeight: 1.8, marginBottom: 14 }}>
+                <div style={{ fontSize: 11, color: 'var(--accent)', marginBottom: 6, fontWeight: 600 }}>填空答案</div>
+                <ClozeText text={card.cloze} revealed={true} />
+              </div>
+            )}
             {card.bullets?.length > 0 && <ul className="bullets">{card.bullets.map((b, i) => <li key={i}>{b}</li>)}</ul>}
             {card.detail && <p style={{ marginTop: 12, color: 'var(--text-2)', fontSize: 13 }}>{card.detail}</p>}
           </div>
         ) : (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: 14, textAlign: 'center', padding: 32, border: '1px dashed var(--border)', borderRadius: 10 }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: 14, textAlign: 'center', padding: 24, border: '1px dashed var(--border)', borderRadius: 10, gap: 16 }}>
+            {card.cloze && (card.cloze.includes('[?|') || card.cloze.includes('[?]')) && (
+              <div style={{ padding: '14px 16px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 10, fontSize: 15, lineHeight: 1.8, textAlign: 'left', width: '100%', maxWidth: 400 }}>
+                <div style={{ fontSize: 11, color: 'var(--text-3)', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>填空测试</div>
+                <ClozeText text={card.cloze} revealed={false} />
+              </div>
+            )}
             <div>
               <div style={{ fontSize: 32, marginBottom: 12, opacity: 0.4 }}>🤔</div>
               <div>先回忆一下，想不起来就点「看答案」</div>

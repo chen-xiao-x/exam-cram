@@ -218,28 +218,68 @@ async function handleGenerate(req, body) {
 
   try {
     const prompt =
-      '你是一名中国大学期末复习助手。根据下面的课程材料，整理知识卡片并出题。\n\n' +
-      '## 严格规则（违反即失败）\n' +
-      '1. 章节数量：必须是 3~6 个章节，不能多也不能少\n' +
-      '2. 每章卡片：必须是 3~8 张\n' +
-      '3. 内容来源：只使用材料中出现的内容，不要编造\n' +
-      '4. 章节命名：用材料中的原始标题（如"第一章 xxx"、"第N节 xxx"），不要自己发明\n' +
-      '5. 卡片标题：简洁概括该知识点，≤20字\n' +
-      '6. 要点 bullets：3~5 条，每条 10~30 字，来自原文\n\n' +
+      '你是一名中国大学期末复习助手。根据课程材料，整理知识卡片并出题。\n\n' +
+      '## 工作流程\n\n' +
+      '### 第1步：识别章节结构\n' +
+      '- 扫描材料，识别 3~6 个主要章节\n' +
+      '- 章节标题用材料中的原始名称\n' +
+      '- 如果材料没有明确章节，按主题逻辑自行划分\n\n' +
+      '### 第2步：提取核心知识点\n' +
+      '- 每章提取 3~8 个核心知识点\n' +
+      '- 每个知识点必须来自材料原文，不要编造\n\n' +
+      '### 第3步：生成知识卡片\n' +
+      '每个知识点生成一张卡片，包含：\n' +
+      '- title：知识点名称（≤15字）\n' +
+      '- tag：类型标签（定义/原理/公式/案例/辨析/制度/技术/特点/流程/方法）\n' +
+      '- summary：一句话概括（20~50字）\n' +
+      '- bullets：3~5 条要点（每条 10~30 字）\n' +
+      '- detail：详细说明（50~200字），案例类必须写清楚来龙去脉\n' +
+      '- cloze：挖空版本，格式 [?|答案]\n\n' +
+      '## 不同类型卡片的写法\n\n' +
+      '### 定义/概念类（重要！）\n' +
+      'bullets 写 1~3 条关键限定词或要素，detail 写一句完整的定义陈述（不要把定义拆碎成碎片）\n\n' +
+      '### 原理/流程/方法类\n' +
+      'bullets 按步骤或要素分点，detail 写完整的原理或流程说明\n\n' +
+      '### 案例类（最重要！）\n' +
+      'bullets 写 3~5 个关键事实，detail 必须写清楚来龙去脉（谁、做了什么、结果如何、说明什么道理）\n\n' +
+      '### 优势/特点/制度类\n' +
+      'bullets 每个优势/特点单独一条，detail 写总结性说明\n\n' +
+      '### 辨析类\n' +
+      'bullets 列出对比维度，detail 写清楚两者的区别和联系\n\n' +
+      '### 第4步：生成练习题\n' +
+      '每张卡片出 2 道题：1道选择或判断 + 1道简答\n\n' +
       '## 输出格式（纯 JSON，不要 markdown 围栏）\n' +
       '{\n' +
       '  "sections": [\n' +
-      '    { "title": "章节标题", "summary": "一句话概述", "cards": [\n' +
-      '      { "title": "卡片标题", "tag": "定义|原理|案例|辨析|制度|技术|特点", "bullets": ["要点1", "要点2", "要点3"], "detail": "完整说明" }\n' +
-      '    ]}\n' +
+      '    {\n' +
+      '      "title": "章节标题",\n' +
+      '      "summary": "章节概述（20~60字）",\n' +
+      '      "cards": [\n' +
+      '        {\n' +
+      '          "title": "知识点名称",\n' +
+      '          "tag": "定义|原理|公式|案例|辨析|制度|技术|特点|流程|方法",\n' +
+      '          "summary": "一句话概括",\n' +
+      '          "bullets": ["要点1", "要点2", "要点3"],\n' +
+      '          "detail": "详细说明（案例类必须写清楚来龙去脉，50~200字）",\n' +
+      '          "cloze": "挖空版本，用 [?|答案] 格式，如：BPR之父是[?|迈克尔·哈默]"\n' +
+      '        }\n' +
+      '      ]\n' +
+      '    }\n' +
       '  ],\n' +
       '  "questions": [\n' +
-      '    { "sectionIndex": 0, "cardIndex": 0, "type": "single", "stem": "题干", "options": ["A.xx","B.xx","C.xx","D.xx"], "answer": "B", "explanation": "解析", "difficulty": "medium" },\n' +
+      '    { "sectionIndex": 0, "cardIndex": 0, "type": "single", "stem": "题干", "options": ["A.xx","B.xx","C.xx","D.xx"], "answer": "B", "explanation": "解析（20~80字）", "difficulty": "medium" },\n' +
       '    { "sectionIndex": 0, "cardIndex": 0, "type": "judge", "stem": "题干", "answer": true, "explanation": "解析", "difficulty": "easy" },\n' +
-      '    { "sectionIndex": 0, "cardIndex": 0, "type": "essay", "stem": "题干", "answer": "参考答案", "explanation": "解析", "difficulty": "hard" }\n' +
+      '    { "sectionIndex": 0, "cardIndex": 0, "type": "essay", "stem": "题干", "answer": "参考答案（80~150字）", "explanation": "要点提示", "difficulty": "hard" }\n' +
       '  ]\n' +
       '}\n\n' +
-      '每张卡片出 2 题（1道选择或判断 + 1道简答）。answer 判断题必须是 true/false 布尔值。\n\n' +
+      '## 质量要求\n' +
+      '1. 所有内容必须来自材料，不要编造\n' +
+      '2. 覆盖材料中的所有重要知识点\n' +
+      '3. 选择题干扰项要有迷惑性\n' +
+      '4. 挖空的必须是关键术语/数字/核心概念\n' +
+      '5. 判断题 answer 必须是 true/false 布尔值\n' +
+      '6. 案例卡片的 detail 必须让没读过材料的人也能理解\n' +
+      '7. 定义类卡片的 detail 必须是一句完整的陈述，不要拆成碎片\n\n' +
       '## 课程材料\n' + text;
 
     const content = await callMimo([
@@ -269,12 +309,15 @@ async function handleGenerate(req, body) {
           const finalTag = VALID_TAGS.includes(tag) ? tag : '定义';
           const bullets = Array.isArray(c.bullets) ? c.bullets.map(x => String(x).trim().slice(0, 80)).filter(Boolean).slice(0, 5) : [];
           const detail = String(c.detail || '').trim().slice(0, 800);
+          const cloze = String(c.cloze || '').trim().slice(0, 300);
+          const summary = String(c.summary || '').trim().slice(0, 100);
           cards.push({
             title: cTitle,
-            subtitle: String(c.subtitle || '').trim().slice(0, 30),
+            subtitle: summary || String(c.subtitle || '').trim().slice(0, 30),
             tag: finalTag,
             bullets: bullets.length >= 2 ? bullets : [detail.slice(0, 40) || cTitle],
             detail: detail || cTitle,
+            cloze: cloze || '',
           });
         }
         if (cards.length > 0) sections.push({ title: secTitle, summary: secSummary, cards });
