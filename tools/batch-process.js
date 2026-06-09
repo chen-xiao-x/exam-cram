@@ -80,33 +80,8 @@ function extractJson(text) {
   return null;
 }
 
-// ---- Prompt ----
-const PROMPT = `你是一名中国大学期末复习助手。根据下面的课程材料，整理知识卡片并出题。
-
-## 严格规则
-1. 章节数量：3~6 个章节
-2. 每章卡片：3~8 张
-3. 只用材料中的内容，不要编造
-4. 章节命名用材料中的原始标题
-5. 卡片标题 ≤20字
-6. bullets 3~5 条，每条 10~30 字
-
-## 输出格式（纯 JSON）
-{
-  "sections": [
-    { "title": "章节标题", "summary": "概述", "cards": [
-      { "title": "卡片标题", "tag": "定义|原理|案例|辨析|制度|技术|特点", "bullets": ["要点1", "要点2"], "detail": "说明" }
-    ]}
-  ],
-  "questions": [
-    { "sectionIndex": 0, "cardIndex": 0, "type": "single", "stem": "题干", "options": ["A.xx","B.xx","C.xx","D.xx"], "answer": "B", "explanation": "解析", "difficulty": "medium" },
-    { "sectionIndex": 0, "cardIndex": 0, "type": "judge", "stem": "题干", "answer": true, "explanation": "解析", "difficulty": "easy" }
-  ]
-}
-每张卡片出 2 题。判断题 answer 必须是 true/false。
-
-## 课程材料
-`;
+// ---- Prompt（从 prompt-v3.txt 读取）----
+const PROMPT = fs.readFileSync(path.join(__dirname, 'prompt-v3.txt'), 'utf8');
 
 // ---- 处理单个文件 ----
 async function processFile(filePath, index, total) {
