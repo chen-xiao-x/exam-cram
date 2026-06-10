@@ -230,30 +230,75 @@ const App = () => {
     const days = daysUntil(course.examDate);
     return (
       <>
-        <div className="hero">
-          <h1>📚 {course.name}</h1>
-          <p className="lede" style={{ marginTop: 8 }}>
-            {course.teacher && course.teacher + ' · '}{course.school}
-            {days !== null && <span style={{ color: days <= 7 ? 'var(--danger)' : undefined }}> · 距考试 {days} 天</span>}
-          </p>
+        {/* 渐变 Hero */}
+        <div className="hero-gradient" style={{ marginBottom: 28 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+            <div>
+              <h1 style={{ fontSize: 32, marginBottom: 8 }}>📚 {course.name}</h1>
+              <p className="lede" style={{ marginTop: 0 }}>
+                {course.teacher && course.teacher + ' · '}{course.school}
+              </p>
+            </div>
+            {days !== null && (
+              <div className={`countdown-badge ${days <= 7 ? 'urgent' : ''}`}>
+                <div className="countdown-num">{days}</div>
+                <div className="countdown-label">天</div>
+              </div>
+            )}
+          </div>
+
+          {/* 统计概览 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 20 }}>
+            <div className="stat-mini">
+              <div className="stat-mini-v">{stats.totalCards}</div>
+              <div className="stat-mini-l">知识点</div>
+            </div>
+            <div className="stat-mini">
+              <div className="stat-mini-v">{stats.totalQ}</div>
+              <div className="stat-mini-l">练习题</div>
+            </div>
+            <div className="stat-mini">
+              <div className="stat-mini-v">{stats.masteredCount}</div>
+              <div className="stat-mini-l">已掌握</div>
+            </div>
+            <div className="stat-mini">
+              <div className="stat-mini-v">{stats.dueCount}</div>
+              <div className="stat-mini-l">待复习</div>
+            </div>
+          </div>
         </div>
 
         {/* 快捷入口 */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginBottom: 28 }}>
-          <div className="card hover" style={{ cursor: 'pointer', textAlign: 'center', padding: 24 }} onClick={() => go('upload')}>
-            <I.upload width={28} height={28} style={{ color: 'var(--accent)', marginBottom: 8 }} />
-            <div style={{ fontWeight: 600 }}>上传课件</div>
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>AI 自动拆分知识点</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 28 }}>
+          <div className="action-card" onClick={() => go('upload')}>
+            <div className="action-icon" style={{ background: 'var(--accent-soft)', color: 'var(--accent)' }}>
+              <I.upload width={24} height={24} />
+            </div>
+            <div className="action-content">
+              <div style={{ fontWeight: 600, fontSize: 15 }}>上传课件</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>AI 自动拆分知识点</div>
+            </div>
+            <I.arrow width={16} height={16} style={{ color: 'var(--text-3)' }} />
           </div>
-          <div className="card hover" style={{ cursor: 'pointer', textAlign: 'center', padding: 24 }} onClick={() => go('review')}>
-            <I.refresh width={28} height={28} style={{ color: 'var(--accent)', marginBottom: 8 }} />
-            <div style={{ fontWeight: 600 }}>间隔复习</div>
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>{stats.dueCount} 张卡片待复习</div>
+          <div className="action-card" onClick={() => go('review')}>
+            <div className="action-icon" style={{ background: 'var(--success-soft)', color: 'var(--success)' }}>
+              <I.refresh width={24} height={24} />
+            </div>
+            <div className="action-content">
+              <div style={{ fontWeight: 600, fontSize: 15 }}>间隔复习</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>{stats.dueCount} 张卡片待复习</div>
+            </div>
+            <I.arrow width={16} height={16} style={{ color: 'var(--text-3)' }} />
           </div>
-          <div className="card hover" style={{ cursor: 'pointer', textAlign: 'center', padding: 24 }} onClick={() => go('quiz')}>
-            <I.target width={28} height={28} style={{ color: 'var(--accent)', marginBottom: 8 }} />
-            <div style={{ fontWeight: 600 }}>刷题</div>
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4 }}>共 {stats.totalQ} 道题</div>
+          <div className="action-card" onClick={() => go('quiz')}>
+            <div className="action-icon" style={{ background: 'var(--warning-soft)', color: 'var(--warning)' }}>
+              <I.target width={24} height={24} />
+            </div>
+            <div className="action-content">
+              <div style={{ fontWeight: 600, fontSize: 15 }}>刷题</div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>共 {stats.totalQ} 道题</div>
+            </div>
+            <I.arrow width={16} height={16} style={{ color: 'var(--text-3)' }} />
           </div>
         </div>
 

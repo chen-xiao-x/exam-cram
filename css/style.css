@@ -69,7 +69,7 @@
     code, pre { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
     code { background: var(--code-bg); padding: 1.5px 5px; border-radius: 4px; }
     .app { display: grid; grid-template-columns: 240px 1fr; height: 100vh; overflow: hidden; }
-    .sidebar { background: var(--bg-elev); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+    .sidebar { background: linear-gradient(180deg, var(--bg-elev) 0%, var(--bg) 100%); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
     .sidebar-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
     .brand { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; letter-spacing: -0.01em; }
     .brand-mark { width: 22px; height: 22px; background: var(--accent); border-radius: 6px; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 700; font-family: 'JetBrains Mono', monospace; }
@@ -148,7 +148,7 @@
     .knowledge-card .preview { color: var(--text-3); font-size: 12px; margin-top: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     .knowledge-card .footer { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--text-3); }
     .mastered-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 500; color: var(--success); background: var(--success-soft); padding: 2px 10px; border-radius: 9999px; }
-    .modal-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px); z-index: 50; display: grid; place-items: center; padding: 24px; animation: fadeIn 160ms ease; }
+    .modal-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px) saturate(180%); z-index: 50; display: grid; place-items: center; padding: 24px; animation: fadeIn 160ms ease; }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .modal { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-lg); max-width: 640px; width: 100%; max-height: 86vh; overflow-y: auto; box-shadow: var(--shadow-3); animation: slideUp 200ms cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -260,7 +260,7 @@
     .sidebar-upload { width: 100%; display: flex; align-items: center; gap: 8px; padding: 9px 10px; margin-bottom: 8px; border: 1px dashed var(--border-strong); border-radius: var(--radius); background: transparent; color: var(--text-2); font-size: 13px; cursor: pointer; transition: all 150ms ease; }
     .sidebar-upload:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
     .sidebar-upload svg { flex: 0 0 14px; }
-    .drawer-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); z-index: 60; animation: fadeIn 160ms ease; }
+    .drawer-mask { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px) saturate(180%); z-index: 60; animation: fadeIn 160ms ease; }
     .drawer { position: fixed; top: 0; right: 0; bottom: 0; width: 420px; max-width: 100vw; background: var(--bg-elev); border-left: 1px solid var(--border); z-index: 61; display: flex; flex-direction: column; box-shadow: var(--shadow-3); animation: slideInRight 220ms cubic-bezier(0.16, 1, 0.3, 1); }
     @keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     .drawer-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
@@ -463,3 +463,111 @@
     .tag-方法 { background: #FFF7ED; color: #EA580C; }
     [data-theme="dark"] .tag-方法 { background: rgba(234, 88, 12, 0.15); color: #FB923C; }
     .tag-知识点 { background: var(--accent-soft); color: var(--accent); }
+
+    /* ===== 渐变 Hero ===== */
+    .hero-gradient {
+      padding: 28px 32px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--bg-elev) 50%, var(--success-soft) 100%);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-gradient::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* ===== 倒计时徽章 ===== */
+    .countdown-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 20px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-2);
+    }
+    .countdown-badge.urgent {
+      background: var(--danger-soft);
+      border-color: var(--danger);
+    }
+    .countdown-badge.urgent .countdown-num {
+      color: var(--danger);
+    }
+    .countdown-num {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .countdown-label {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 2px;
+    }
+
+    /* ===== 统计迷你卡 ===== */
+    .stat-mini {
+      padding: 14px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      text-align: center;
+      transition: all 120ms ease;
+    }
+    .stat-mini:hover {
+      border-color: var(--border-strong);
+      box-shadow: var(--shadow-1);
+    }
+    .stat-mini-v {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .stat-mini-l {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 4px;
+    }
+
+    /* ===== 操作卡片 ===== */
+    .action-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all 160ms ease;
+    }
+    .action-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-2);
+      transform: translateY(-2px);
+    }
+    .action-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .action-content {
+      flex: 1;
+      min-width: 0;
+    }
