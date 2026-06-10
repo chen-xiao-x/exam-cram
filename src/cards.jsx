@@ -66,7 +66,7 @@ const CardModal = ({ card, onClose, onMaster }) => {
           <div className="flashcard-inner">
             <div className="flashcard-face flashcard-front">
               <button className="btn btn-ghost btn-sm" style={{ position: 'absolute', top: 14, right: 14 }} onClick={onClose}><I.x width={14} height={14} /></button>
-              <span className="tag-inline accent" style={{ marginBottom: 10, alignSelf: 'flex-start' }}>{card.tag}</span>
+              <span className={`tag tag-${card.tag || '知识点'}`} style={{ marginBottom: 10, alignSelf: 'flex-start' }}>{card.tag || '知识点'}</span>
               <h2 style={{ marginTop: 6, fontSize: 22, lineHeight: 1.4 }}>{card.title}</h2>
               {card.subtitle && <p style={{ color: 'var(--text-2)', fontSize: 14, marginTop: 12 }}>{card.subtitle}</p>}
               {hasCloze && (
@@ -139,7 +139,7 @@ const SectionView = ({ sectionId, course, go, mastered, setMastered, setOpenedCa
           const isMastered = mastered.has(c.id);
           return (
             <div key={c.id} className="knowledge-card" onClick={() => setOpenedCard(c)}>
-              <span className="tag">{c.tag}</span>
+              <span className={`tag tag-${c.tag || '知识点'}`}>{c.tag || '知识点'}</span>
               <h3>{c.title}</h3>
               {c.subtitle && <p className="sub">{c.subtitle}</p>}
               {c.cloze && (c.cloze.includes('[?|') || c.cloze.includes('[?]')) ? (
@@ -191,7 +191,7 @@ const SpeedRun = ({ sectionId, course, mastered, setMastered }) => {
       <div className={`flash-card ${flipped ? 'flipped' : ''}`} onClick={() => setFlipped(!flipped)}>
         <div className="flash-inner">
           <div className="flash-face">
-            <div className="stem">{c.tag} · {sec?.title || ''}</div>
+            <div className="stem"><span className={`tag tag-${c.tag || '知识点'}`} style={{ marginRight: 8 }}>{c.tag || '知识点'}</span>{sec?.title || ''}</div>
             <div className="q">{c.title}</div>
             {c.cloze && (c.cloze.includes('[?|') || c.cloze.includes('[?]')) && (
               <div style={{ marginTop: 14, padding: '12px 14px', background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: 8, fontSize: 14, lineHeight: 1.8, textAlign: 'left' }}>

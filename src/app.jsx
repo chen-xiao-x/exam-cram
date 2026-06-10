@@ -320,6 +320,7 @@ const App = () => {
         <div className="content"><div className="container">{body}</div></div>
       </div>
       {openedCard && <CardModal card={openedCard} onClose={() => setOpenedCard(null)} onMaster={(id) => setMastered(id, true)} />}
+      <ToastContainer />
     </div>
   );
 };
